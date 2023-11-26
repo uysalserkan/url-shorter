@@ -1,4 +1,6 @@
 """Class defination for using and creating SQL Lite schemas."""
+import random
+import string
 from datetime import datetime
 from typing import Optional
 from sqlmodel import SQLModel, Field, create_engine
@@ -15,6 +17,13 @@ class URLS(SQLModel, table=True):
     generated_url: str = Field(nullable=True)
     created_date: int = datetime.utcnow().timestamp()
     expire_date: int = Field(nullable=False)
+
+    @classmethod
+    def generate_randoms(cls):
+        """Docstring."""
+        characters = string.ascii_letters + string.digits
+
+        return ''.join(random.choice(characters) for _ in range(10))
 
 
 def create_db_and_tables():
