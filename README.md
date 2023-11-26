@@ -5,6 +5,8 @@
 ## TODO:
 
 * [ ] Create upload a file endpoint.
+  * [ ] Implement MinIO.
+  * [ ] Update DB class.
 * [ ] Run another thread for delete expired urls.
 * [ ] Add CI / CD file on GitHub.
 
