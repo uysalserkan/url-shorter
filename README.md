@@ -6,6 +6,7 @@
 
 * [ ] Create upload a file endpoint.
 * [ ] Run another thread for delete expired urls.
+* [ ] Add CI / CD file on GitHub.
 
 ## Introduction
 
