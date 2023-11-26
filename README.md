@@ -4,8 +4,8 @@
 
 ## TODO:
 
-* Create upload a file endpoint.
-* Run another thread for delete expired urls.
+* [ ] Create upload a file endpoint.
+* [ ] Run another thread for delete expired urls.
 
 ## Introduction
 
