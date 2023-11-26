@@ -1,6 +1,7 @@
 """URL Shorter API."""
 from datetime import datetime, timedelta
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from sqlmodel import create_engine, Session, select
 from models.urls import URLS
 
@@ -30,6 +31,14 @@ def generate_short():
         generated_short = URLS.generate_randoms()
         if generated_short not in all_shorts_list:
             return generated_short
+
+
+def get_full_url(short_url: str) -> str:
+    """Docstring."""
+    with (Session(engine) as sess):
+        full_url = sess.exec(select(URLS.long_url).filter(URLS.generated_url == short_url)).first()
+
+        return full_url
 
 
 @app.get(
@@ -75,3 +84,13 @@ def create_url(url: str, day: int, mins: int):
         session.refresh(url_obj)
 
     return url_obj
+
+
+@app.get("/{short_url}")
+async def redirect(short_url: str):
+    """Docstring."""
+    full_url = get_full_url(short_url=short_url)
+
+    response = RedirectResponse(url=full_url)
+    print("Response:", response)
+    return response
