@@ -4,6 +4,9 @@
 
 ## TODO:
 
+* [ ] Add Makefile.
+  * [ ] Add workflow automations.
+* [ ] Add Dockerfile.
 * [ ] Create upload a file endpoint.
   * [ ] Implement MinIO.
   * [ ] Update DB class.
