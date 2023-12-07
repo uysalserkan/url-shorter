@@ -4,13 +4,15 @@
 
 ## TODO:
 
-* [ ] Add Makefile.
+* [x] Add Makefile.
   * [ ] Add workflow automations.
 * [ ] Add Dockerfile.
 * [ ] Add unittests.
-* [ ] Create upload a file endpoint.
-  * [ ] Implement MinIO.
-  * [ ] Update DB class.
+* [x] Create upload a file endpoint.
+  * [x] Implement MinIO.
+  * [x] Update DB class.
+* [ ] Add validation functions.
+  * [ ] For URLs.
 * [ ] Run another thread for delete expired urls.
 * [ ] Add CI / CD file on GitHub.
 
@@ -31,7 +33,10 @@ The URL Shortener Service is a simple and efficient tool for shortening long URL
 
 - Python 3.x
 - FastAPI (for the web application)
+- Uvicorn
 - SQLAlchemy (for database interaction)
+- MinIO (for object storage)
+- Dynaconf (for configs)
 
 ### Installation
 
