@@ -1,0 +1,3 @@
+[default]
+MINIO_SERVER = "localhost:9000"
+MINIO_BUCKET = "files"
