@@ -7,6 +7,7 @@
 * [ ] Add Makefile.
   * [ ] Add workflow automations.
 * [ ] Add Dockerfile.
+* [ ] Add unittests.
 * [ ] Create upload a file endpoint.
   * [ ] Implement MinIO.
   * [ ] Update DB class.
