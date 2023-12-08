@@ -6,6 +6,7 @@
 
 * [x] Add Makefile.
   * [ ] Add workflow automations.
+* [ ] Add Prometheus metrics.
 * [ ] Add Dockerfile.
 * [ ] Add unittests.
 * [x] Create upload a file endpoint.
