@@ -18,7 +18,7 @@
   * [ ] Is expired?
 * [x] Run another thread for delete expired urls.
 * [ ] Add CI / CD file on GitHub.
-* [ ] Change response between browser and curl.
+* [x] Change response between browser and curl.
 
 ## Introduction
 
