@@ -2,7 +2,7 @@
 import os
 import sys
 from pathlib import Path
-from sqlmodel import create_engine, Session, select
+from sqlmodel import select
 
 
 FOLDER_PATH = Path(__file__).resolve().parent
@@ -10,8 +10,7 @@ ROOT_PATH = FOLDER_PATH.parent
 sys.path.append(str(ROOT_PATH))
 
 from models.urls import URLS
-from config import settings
-from database import DatabaseEngine
+from engines import DatabaseEngine
 
 DB_engine = DatabaseEngine()
 
