@@ -7,11 +7,14 @@ from sqlmodel import create_engine, Session, select
 from models.urls import URLS
 from minio import Minio
 from config import settings
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(
     title="URL Shorter Service",
     description="Short your long url links.",
 )
+
+Instrumentator().instrument(app).expose(app)
 
 sqlite_file_name = "models/database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
