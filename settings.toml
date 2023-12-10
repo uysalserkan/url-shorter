@@ -1,4 +1,11 @@
-[default]
+[BUCKET]
 MINIO_SERVER = "localhost:9000"
 MINIO_BUCKET = "files"
 MINIO_OBJECT = "minioObject"
+
+[REMOVE]
+CHECK_DELAY = 3600  # 1 hour
+
+[DATABASE]
+FOLDER_PATH = "models"
+NAME = "database.db"
