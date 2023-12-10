@@ -16,7 +16,7 @@
 * [ ] Add validation functions.
   * [ ] For URLs.
   * [ ] Is expired?
-* [ ] Run another thread for delete expired urls.
+* [x] Run another thread for delete expired urls.
 * [ ] Add CI / CD file on GitHub.
 
 ## Introduction
