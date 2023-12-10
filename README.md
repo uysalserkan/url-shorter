@@ -7,7 +7,7 @@
 * [x] Add Makefile.
   * [ ] Add workflow automations.
 * [x] Add Prometheus metrics.
-* [ ] Make SQL Engine singlethon.
+* [x] Make SQL Engine singlethon.
 * [ ] Add Dockerfile.
 * [ ] Add unittests.
 * [x] Create upload a file endpoint.
