@@ -15,7 +15,7 @@ db    db d8888b. db             .d8888. db   db  .d88b.  d8888b. d888888b d88888
 * [x] Add Makefile.
 * [x] Add Prometheus metrics.
 * [x] Make SQL Engine singlethon.
-* [ ] Add Dockerfile.
+* [x] Add Dockerfile.
 * [ ] Add unittests.
 * [x] Create upload a file endpoint.
   * [x] Implement MinIO.
@@ -23,6 +23,7 @@ db    db d8888b. db             .d8888. db   db  .d88b.  d8888b. d888888b d88888
 * [ ] Add validation functions.
   * [ ] For URLs.
   * [ ] Is expired?
+  * [ ] Delete files which not exist on DB.
 * [x] Run another thread for delete expired urls.
 * [ ] Add CI / CD file on GitHub.
   * [ ] Add workflow automations.
@@ -55,21 +56,43 @@ The URL Shortener Service is a simple and efficient tool for shortening long URL
 
 1. Clone the repository:
 
-   ```bash
+   ```shell
    git clone https://github.com/uysalserkan/url-shorter.git
    cd url-shortener
     ```
 
 2. Install dependencies
 
-   ```bash
+   ```shell
    conda env create -n url-shorter --file conda_env.yaml
    ```
 
 3. Run application
 
-   ```bash
+   ```shell
    uvicorn app:app --port 25250
+   ```
+
+### Run Docker
+
+1. ```shell
+   docker build -t url-shorter .
+   ```
+
+2. ```bash
+   # Install MinIO
+   docker run -d \                                                        
+    -p 9000:9000 \      
+    -p 9090:9090 \
+    --name minio \
+    -v ~/minio/data:/data \
+    -e "MINIO_ROOT_USER=minioadmin" \
+    -e "MINIO_ROOT_PASSWORD=minioadmin" \
+    quay.io/minio/minio server /data --console-address ":9090"
+   ``` 
+
+3. ```shell
+   docker run -n url-shorter-container -p 80:80 --network host url-shorter
    ```
 
 # License
