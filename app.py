@@ -5,7 +5,7 @@ import multiprocessing
 import time
 from datetime import datetime, timedelta
 
-from fastapi import FastAPI, Response, UploadFile
+from fastapi import FastAPI, Response, UploadFile, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from sqlmodel import create_engine, Session, select
 from minio import Minio
@@ -187,14 +187,17 @@ def minio_save_db(short_name: str, days: int, hours: int, mins: int) -> bool:
         session.refresh(url_obj)
 
 
-
 @app.get(
     path='/',
     description="Home page.",
 )
-def home_page():
+async def home_page(request: Request):
     """Docstring."""
-    return "Amazing Home page."
+    agent = request.headers.get("User-Agent").lower()
+    if ("curl" in agent) or ("wget" in agent) or ("postman" in agent):
+        print("Agent->", agent)
+    print("User Agent:", agent)
+    return request.headers
 
 
 @app.post(
@@ -256,15 +259,27 @@ def upload_file(file: UploadFile, days: int = 0, hours: int = 0, mins: int = 0):
 
 
 @app.get("/{short_url}")
-def redirect(short_url: str):
+def redirect(short_url: str, request: Request):
     """Docstring."""
+    is_browser = True
+    agent = request.headers.get("User-Agent").lower()
+    if ("curl" in agent) or ("wget" in agent) or ("postman" in agent):
+        is_browser = False
+
     if is_minio_object(short_url):
         obj = get_minio_object(short_name=short_url)
         response = Response(content=obj.read(), media_type=obj.info()['Content-Type'])
         response.headers["Content-Disposition"] = f"attachment; filename={obj.info()['x-amz-meta-filename']}"
 
+        # if is_browser:
+        #     response = Response(content="# Header", media_type="text/html")
+        #     response.status_code = 302
+
     else:
         full_url = get_full_url(short_url=short_url)
-        response = RedirectResponse(url=full_url)
+        if is_browser:
+            response = RedirectResponse(url=full_url)
+        else:
+            response = full_url
 
     return response
