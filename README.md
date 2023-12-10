@@ -38,9 +38,10 @@ The URL Shortener Service is a simple and efficient tool for shortening long URL
 - Python 3.x
 - FastAPI (for the web application)
 - Uvicorn
-- SQLAlchemy (for database interaction)
+- SQLModel (for database interaction)
 - MinIO (for object storage)
 - Dynaconf (for configs)
+- Prometheus (data collection)
 
 ### Installation
 
@@ -54,7 +55,7 @@ The URL Shortener Service is a simple and efficient tool for shortening long URL
 2. Install dependencies
 
    ```bash
-   pip install -r requirements.txt
+   conda env create -n url-shorter --file conda_env.yaml
    ```
 
 3. Run application
