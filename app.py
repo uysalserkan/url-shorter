@@ -13,7 +13,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from models.urls import URLS
 from controller.url_c import URLController
-from config import settings
+from config import settings, secrets
 from database import DatabaseEngine
 
 app = FastAPI(
@@ -28,8 +28,8 @@ DB_engine = DatabaseEngine()
 
 minio_client = Minio(
     endpoint=settings.BUCKET.MINIO_SERVER,
-    access_key=settings.development.MINIO_USERNAME,
-    secret_key=settings.development.MINIO_PASSWORD,
+    access_key=secrets.development.MINIO_USERNAME,
+    secret_key=secrets.development.MINIO_PASSWORD,
     secure=False
 )
 
