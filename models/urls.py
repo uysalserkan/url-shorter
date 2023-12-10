@@ -1,14 +1,22 @@
 """Class defination for using and creating SQL Lite schemas."""
+from pathlib import Path
+import sys
 import random
 import string
 from datetime import datetime
 from typing import Optional
 from sqlmodel import SQLModel, Field, create_engine
 
-sqlite_file_name = "database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+FOLDER_PATH = Path(__file__).resolve().parent
+ROOT_PATH = FOLDER_PATH.parent
+sys.path.append(str(ROOT_PATH))
 
-engine = create_engine(sqlite_url, echo=True)
+from config import settings
+
+sql_file_path = settings.DATABASE.NAME
+sqlite_url = f"sqlite:///{sql_file_path}"
+
+engine = create_engine(sqlite_url, echo=False)
 
 
 class URLS(SQLModel, table=True):
