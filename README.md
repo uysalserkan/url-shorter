@@ -6,7 +6,8 @@
 
 * [x] Add Makefile.
   * [ ] Add workflow automations.
-* [ ] Add Prometheus metrics.
+* [x] Add Prometheus metrics.
+* [ ] Make SQL Engine singlethon.
 * [ ] Add Dockerfile.
 * [ ] Add unittests.
 * [x] Create upload a file endpoint.
@@ -14,6 +15,7 @@
   * [x] Update DB class.
 * [ ] Add validation functions.
   * [ ] For URLs.
+  * [ ] Is expired?
 * [ ] Run another thread for delete expired urls.
 * [ ] Add CI / CD file on GitHub.
 
