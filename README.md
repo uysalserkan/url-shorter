@@ -28,6 +28,7 @@ db    db d8888b. db             .d8888. db   db  .d88b.  d8888b. d888888b d88888
 * [ ] Add CI / CD file on GitHub.
   * [ ] Add workflow automations.
 * [x] Change response between browser and curl.
+* [ ] Add delete after download/visit option.
 
 ## Introduction
 
