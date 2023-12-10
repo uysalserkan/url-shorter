@@ -1,20 +1,17 @@
 """URL Shorter API."""
-import io
-import os
 import multiprocessing
 import time
 from datetime import datetime, timedelta
 
 from fastapi import FastAPI, Response, UploadFile, Request
 from fastapi.responses import RedirectResponse, JSONResponse
-from sqlmodel import create_engine, Session, select
-from minio import Minio
+from sqlmodel import select
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from models.urls import URLS
 from controller.url_c import URLController
 from config import settings, secrets
-from database import DatabaseEngine
+from engines import DatabaseEngine, MinIOEngine
 
 app = FastAPI(
     title="URL Shorter Service",
@@ -25,13 +22,7 @@ Instrumentator().instrument(app).expose(app)
 
 
 DB_engine = DatabaseEngine()
-
-minio_client = Minio(
-    endpoint=settings.BUCKET.MINIO_SERVER,
-    access_key=secrets.development.MINIO_USERNAME,
-    secret_key=secrets.development.MINIO_PASSWORD,
-    secure=False
-)
+MINIO_engine = MinIOEngine()
 
 
 def delete_cron():
@@ -44,10 +35,7 @@ def delete_cron():
                 url_obj = URLController.get(each_entry.id)
                 if url_obj.long_url == settings.BUCKET.MINIO_OBJECT:
                     print("MinIO Object", url_obj.long_url, "will be deleted.")
-                    minio_client.remove_object(
-                        bucket_name=settings.BUCKET.MINIO_BUCKET,
-                        object_name=url_obj.generated_url,
-                    )
+                    MinIOEngine.delete(short_url=url_obj.generated_url)
                     URLController.delete(url_id=url_obj.id)
                 else:
                     print("Short URL", url_obj.long_url, "will be deleted.")
@@ -57,33 +45,11 @@ def delete_cron():
         time.sleep(settings.REMOVE.CHECK_DELAY)
 
 
-def create_bucket():
-    """Create minio bucket."""
-    try:
-        minio_client.make_bucket(settings.BUCKET.MINIO_BUCKET)
-
-    except Exception as exc:
-        raise f"Some error countered: {exc}"
-
-
 def upload_minio(file: UploadFile, days, hours, mins) -> str:
     """Upload a file to minio server."""
     try:
         short_name = generate_short()
-
-        result = minio_client.put_object(
-            bucket_name=settings.BUCKET.MINIO_BUCKET,
-            object_name=short_name,
-            data=file.file,
-            length=file.size,
-            metadata={
-                'filename': file.filename,
-                'content_type': file.content_type,
-                'headers': file.headers,
-                'size': file.size
-            }
-        )
-
+        MINIO_engine.add(file=file, short_name=short_name)
         minio_save_db(short_name=short_name, days=days, hours=hours, mins=mins)
 
         return short_name
@@ -95,10 +61,7 @@ def upload_minio(file: UploadFile, days, hours, mins) -> str:
 def get_minio_object(short_name: str):
     """Get minio object."""
     try:
-        obj = minio_client.get_object(
-            bucket_name=settings.BUCKET.MINIO_BUCKET,
-            object_name=short_name
-        )
+        obj = MINIO_engine.get(short_name=short_name)
 
         return obj
 
@@ -147,10 +110,9 @@ def is_minio_object(short_url: str) -> bool:
 
 @app.on_event("startup")
 async def before_startup():
-    # multiprocessing.set_start_method("fork")
-    delete_process = multiprocessing.Process(target=delete_cron)
-    # delete_process._start_method("spawn")
+    MINIO_engine.create_bucket()
 
+    delete_process = multiprocessing.Process(target=delete_cron)
     delete_process.start()
 
 
@@ -163,7 +125,7 @@ def shorts():
     return get_all_shorts()
 
 
-def minio_save_db(short_name: str, days: int, hours: int, mins: int) -> bool:
+def minio_save_db(short_name: str, days: int, hours: int, mins: int):
     """Create minio object url to db."""
 
     unix_time = datetime.utcnow().timestamp()
@@ -176,7 +138,6 @@ def minio_save_db(short_name: str, days: int, hours: int, mins: int) -> bool:
         generated_url=short_name,
         expire_date=expire_date
     )
-    print("URL object is:", url_obj)
 
     DB_engine.add(obj=url_obj, batch=False)
 
@@ -228,11 +189,6 @@ def upload_file(file: UploadFile, days: int = 0, hours: int = 0, mins: int = 0):
         return "Please enter any mins or days value."
 
     try:
-        is_bucket_exist = minio_client.bucket_exists(settings.BUCKET.MINIO_BUCKET)
-
-        if not is_bucket_exist:
-            create_bucket()
-
         short_name = upload_minio(file=file, days=days, hours=hours, mins=mins)
 
         return JSONResponse(
