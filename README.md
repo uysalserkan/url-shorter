@@ -16,7 +16,8 @@ db    db d8888b. db             .d8888. db   db  .d88b.  d8888b. d888888b d88888
 * [x] Add Prometheus metrics.
 * [x] Make SQL Engine singlethon.
 * [x] Add Dockerfile.
-* [ ] Add unittests.
+* [x] Change response between browser and curl.
+* [x] Run another thread for delete expired urls.
 * [x] Create upload a file endpoint.
   * [x] Implement MinIO.
   * [x] Update DB class.
@@ -24,10 +25,9 @@ db    db d8888b. db             .d8888. db   db  .d88b.  d8888b. d888888b d88888
   * [ ] For URLs.
   * [ ] Is expired?
   * [ ] Delete files which not exist on DB.
-* [x] Run another thread for delete expired urls.
+* [ ] Add unittests.
 * [ ] Add CI / CD file on GitHub.
-  * [ ] Add workflow automations.
-* [x] Change response between browser and curl.
+    * [ ] Add workflow automations.
 * [ ] Add delete after download/visit option.
 
 ## Introduction
