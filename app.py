@@ -14,6 +14,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from models.urls import URLS
 from controller.url_c import URLController
 from config import settings
+from database import DatabaseEngine
 
 app = FastAPI(
     title="URL Shorter Service",
@@ -23,11 +24,7 @@ app = FastAPI(
 Instrumentator().instrument(app).expose(app)
 
 
-
-sql_file_path = os.path.join(settings.DATABASE.FOLDER_PATH, settings.DATABASE.NAME)
-sqlite_url = f"sqlite:///{sql_file_path}"
-
-engine = create_engine(sqlite_url, echo=False)
+DB_engine = DatabaseEngine()
 
 minio_client = Minio(
     endpoint=settings.BUCKET.MINIO_SERVER,
@@ -40,10 +37,7 @@ minio_client = Minio(
 def delete_cron():
     """Delete expired urls."""
     while True:
-        with Session(engine) as sess:
-            all_entries = sess.exec(statement=select(URLS)).all()
-            sess.close()
-
+        all_entries = DB_engine.get(statement=select(URLS), first=False)
         cur_time = time.time()
         for each_entry in all_entries:
             if each_entry.expire_date - cur_time <= 0:
@@ -109,15 +103,14 @@ def get_minio_object(short_name: str):
         return obj
 
     except Exception as exc:
-        print(f"Encountered error when trying to get object:", exc)
+        print("Encountered error when trying to get object:", exc)
 
 
 def get_all_shorts():
     """Docstrings."""
-    with Session(engine) as sess:
-        all_inputs = sess.exec(select(URLS.generated_url)).all()
+    all_inputs = DB_engine.get(statement=select(URLS.generated_url), first=False)
 
-        return all_inputs
+    return all_inputs
 
 
 def generate_short():
@@ -131,21 +124,25 @@ def generate_short():
 
 def get_full_url(short_url: str) -> str:
     """Docstring."""
-    with (Session(engine) as sess):
-        full_url = sess.exec(select(URLS.long_url).filter(URLS.generated_url == short_url)).first()
+    full_url = DB_engine.get(
+        statement=select(URLS.long_url).filter(URLS.generated_url == short_url),
+        first=True
+    )
 
-        return full_url
+    return full_url
 
 
 def is_minio_object(short_url: str) -> bool:
     """Check this short url is minio object or not."""
-    with (Session(engine) as sess):
-        full_url = sess.exec(select(URLS.long_url).filter(URLS.generated_url == short_url)).first()
+    full_url = DB_engine.get(
+        statement=select(URLS.long_url).filter(URLS.generated_url == short_url),
+        first=True
+    )
 
-        if full_url == settings.BUCKET.MINIO_OBJECT:
-            return True
+    if full_url == settings.BUCKET.MINIO_OBJECT:
+        return True
 
-        return False
+    return False
 
 
 @app.on_event("startup")
@@ -181,10 +178,7 @@ def minio_save_db(short_name: str, days: int, hours: int, mins: int) -> bool:
     )
     print("URL object is:", url_obj)
 
-    with Session(engine) as session:
-        session.add(url_obj)
-        session.commit()
-        session.refresh(url_obj)
+    DB_engine.add(obj=url_obj, batch=False)
 
 
 @app.get(
@@ -222,10 +216,7 @@ def create_url(url: str, days: int = 0, hours: int = 0, mins: int = 0):
     )
     print("URL object is:", url_obj)
 
-    with Session(engine) as session:
-        session.add(url_obj)
-        session.commit()
-        session.refresh(url_obj)
+    DB_engine.add(obj=url_obj, batch=False)
 
     return url_obj
 
