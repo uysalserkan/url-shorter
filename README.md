@@ -10,6 +10,14 @@ db    db d8888b. db             .d8888. db   db  .d88b.  d8888b. d888888b d88888
 
 ```
 
+![GitHub License](https://img.shields.io/github/license/uysalserkan/url-shorter)
+![GitHub issues](https://img.shields.io/github/issues/uysalserkan/url-shorter)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/uysalserkan/url-shorter)
+![GitHub Repo stars](https://img.shields.io/github/stars/uysalserkan/url-shorter)
+![GitHub forks](https://img.shields.io/github/forks/uysalserkan/url-shorter)
+![GitHub repo size](https://img.shields.io/github/repo-size/uysalserkan/url-shorter)
+
+
 ## TODO:
 
 * [x] Add Makefile.
