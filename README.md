@@ -29,10 +29,10 @@ db    db d8888b. db             .d8888. db   db  .d88b.  d8888b. d888888b d88888
 * [x] Create upload a file endpoint.
   * [x] Implement MinIO.
   * [x] Update DB class.
-* [ ] Add validation functions.
-  * [ ] For URLs.
-  * [ ] Is expired?
-  * [ ] Delete files which not exist on DB.
+* [x] Add validation functions.
+  * [x] For URLs.
+  * [x] Is expired?
+  * [x] Delete files which not exist on DB.
 * [ ] Add unittests.
 * [ ] Add CI / CD file on GitHub.
     * [ ] Add workflow automations.
