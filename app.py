@@ -12,6 +12,7 @@ from models.urls import URLS
 from controller.url_c import URLController
 from config import settings, secrets
 from engines import DatabaseEngine, MinIOEngine
+from validators import url_validation
 
 app = FastAPI(
     title="URL Shorter Service",
@@ -108,12 +109,12 @@ def is_minio_object(short_url: str) -> bool:
     return False
 
 
-@app.on_event("startup")
-async def before_startup():
-    MINIO_engine.create_bucket()
-
-    delete_process = multiprocessing.Process(target=delete_cron)
-    delete_process.start()
+# @app.on_event("startup")
+# async def before_startup():
+#     MINIO_engine.create_bucket()
+#
+#     delete_process = multiprocessing.Process(target=delete_cron)
+#     delete_process.start()
 
 
 @app.get(
@@ -161,6 +162,13 @@ async def home_page(request: Request):
 )
 def create_url(url: str, days: int = 0, hours: int = 0, mins: int = 0):
     """Docstring"""
+    valid_url = url_validation(url)
+    if not valid_url:
+        return None
+
+    else:
+        url = valid_url
+
     print("URL is:", url)
     if not days and not hours and not mins:
         return "Please enter any mins or days value."
